@@ -109,6 +109,7 @@ services:
   # ---------- phpMyAdmin ----------
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.2.1
+    platform: linux/amd64
     container_name: soccer_phpmyadmin
     restart: unless-stopped
     environment:

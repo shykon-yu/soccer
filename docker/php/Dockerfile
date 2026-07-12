@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig-dev \
     libxml2-dev \
     libcurl4-openssl-dev \
+    librabbitmq-dev \
+    pkg-config \
     zip \
     unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -26,7 +28,7 @@ RUN docker-php-ext-install \
 
 # PECL 扩展：redis / amqp(RabbitMQ)
 RUN pecl install redis && docker-php-ext-enable redis
-RUN pecl install amqp && docker-php-ext-enable amqp
+RUN yes "" | pecl install amqp && docker-php-ext-enable amqp
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
