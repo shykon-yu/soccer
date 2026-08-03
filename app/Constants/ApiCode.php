@@ -21,21 +21,36 @@ class ApiCode
 
     // ---- HTTP 语义错误码（与前端拦截器分支保持一致）----
     public const BAD_REQUEST = 400;
+
     public const UNAUTHENTICATED = 401;   // 前端据此登出
+
     public const FORBIDDEN = 403;
+
     public const NOT_FOUND = 404;
+
     public const METHOD_NOT_ALLOWED = 405;
+
     public const VALIDATION_FAILED = 422;
+
+    public const TOO_MANY_REQUESTS = 429;
+
     public const SERVER_ERROR = 500;
 
     // ---- 业务错误码（1000 起，按模块递增，便于前端按 code 精确展示）----
     public const PARAM_ERROR = 1000;        // 参数错误
+
     public const LOGIN_FAILED = 1001;       // 登录失败
+
     public const ACCOUNT_DISABLED = 1002;   // 账号被禁用
+
     public const TOKEN_EXPIRED = 1003;      // token 过期
+
     public const PERMISSION_DENIED = 1004;  // 权限不足
+
     public const RESOURCE_EXISTS = 1005;    // 资源已存在
+
     public const FAIL = 1006;               // 通用业务失败（ApiResponse::fail() 默认用）
+
     public const UPLOAD_FAILED = 1007;      // 上传失败
 
     /**
@@ -49,6 +64,7 @@ class ApiCode
         self::NOT_FOUND => '请求的资源不存在',
         self::METHOD_NOT_ALLOWED => '请求方法不被允许',
         self::VALIDATION_FAILED => '提交的数据校验失败',
+        self::TOO_MANY_REQUESTS => '请求过于频繁，请稍后再试',
         self::SERVER_ERROR => '服务器内部错误',
 
         self::PARAM_ERROR => '参数错误',
@@ -72,6 +88,7 @@ class ApiCode
         self::NOT_FOUND => 404,
         self::METHOD_NOT_ALLOWED => 405,
         self::VALIDATION_FAILED => 422,
+        self::TOO_MANY_REQUESTS => 429,
         self::SERVER_ERROR => 500,
 
         self::PARAM_ERROR => 400,

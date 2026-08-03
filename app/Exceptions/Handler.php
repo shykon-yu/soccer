@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Throwable;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -127,6 +128,10 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof MethodNotAllowedHttpException) {
             return $this->apiError(ApiCode::message(ApiCode::METHOD_NOT_ALLOWED), ApiCode::METHOD_NOT_ALLOWED, 405);
+        }
+
+        if ($e instanceof TooManyRequestsHttpException) {
+            return $this->apiError(ApiCode::message(ApiCode::TOO_MANY_REQUESTS), ApiCode::TOO_MANY_REQUESTS, 429);
         }
 
         // 500 及未预料的异常：记录完整堆栈便于排查

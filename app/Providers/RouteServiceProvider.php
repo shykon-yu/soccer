@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -49,9 +50,11 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
-        // 登录接口严格限流：每分钟每个 IP 最多 5 次
+        // Go 平台会通过同一内网地址转发登录；按账号和来源共同限流，避免玩家互相占用额度。
         RateLimiter::for('auth', function (Request $request) {
-            return Limit::perMinute(5)->by($request->ip());
+            $username = Str::lower((string) $request->input('username'));
+
+            return Limit::perMinute(5)->by($username.'|'.$request->ip());
         });
 
         // 刷新令牌限流：正常频率约每小时一次，预留办公室 NAT 多用户场景
