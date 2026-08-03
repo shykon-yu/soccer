@@ -1,11 +1,15 @@
 # PHP 8.2-FPM for Laravel 9 (soccer_php)
 FROM php:8.2-fpm
 
+# Use a mainland China mirror by default; pass --build-arg APT_MIRROR=deb.debian.org
+# when building in an environment with fast access to Debian's official mirror.
+ARG APT_MIRROR=mirrors.aliyun.com
+RUN sed -i "s|deb.debian.org|${APT_MIRROR}|g; s|security.debian.org|${APT_MIRROR}|g" /etc/apt/sources.list.d/debian.sources
+
 # 系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
-    wget \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
@@ -13,15 +17,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig-dev \
     libxml2-dev \
     libcurl4-openssl-dev \
-    librabbitmq-dev \
-    pkg-config \
     zip \
     unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # PHP 核心扩展
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install \
+RUN docker-php-ext-install -j$(nproc) \
     curl \
     pdo_mysql \
     mbstring \
@@ -33,9 +35,8 @@ RUN docker-php-ext-install \
     zip \
     opcache
 
-# PECL 扩展：redis / amqp(RabbitMQ)
+# PECL 扩展：redis
 RUN pecl install redis && docker-php-ext-enable redis
-RUN yes "" | pecl install amqp && docker-php-ext-enable amqp
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -51,6 +52,7 @@ COPY composer.json composer.lock ./
 # 当前锁文件中的 laravel-lang/lang 被 Composer 新版 malware 规则误拦，
 # 依赖仍严格按 composer.lock 安装；后续升级依赖时再恢复默认审计策略。
 RUN composer config --global policy.malware.block false \
+    && composer config --global repos.packagist composer https://mirrors.cloud.tencent.com/composer/ \
     && composer install --no-interaction --prefer-dist --no-progress --no-scripts
 COPY . .
 RUN composer dump-autoload --optimize
