@@ -48,5 +48,15 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // 登录接口严格限流：每分钟每个 IP 最多 5 次
+        RateLimiter::for('auth', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
+
+        // 刷新令牌限流：正常频率约每小时一次，预留办公室 NAT 多用户场景
+        RateLimiter::for('refresh', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
+        });
     }
 }

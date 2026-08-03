@@ -106,6 +106,17 @@ services:
     networks:
       - soccer-network
 
+  # ---------- Mailpit (本地邮件调试) ----------
+  mailpit:
+    image: axllent/mailpit:v1.21
+    container_name: soccer_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - soccer-network
+
   # ---------- phpMyAdmin ----------
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.2.1

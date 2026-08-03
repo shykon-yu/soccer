@@ -1,9 +1,13 @@
 .git
 .gitignore
-node_modules
 vendor
+node_modules
 storage/*.key
 .env
 .phpunit.result.cache
 docker-compose.yml
 Dockerfile
+storage/logs
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
