@@ -19,7 +19,7 @@ class MemberSeederTest extends TestCase
     {
         Role::findOrCreate('队员', 'api');
         User::query()->create([
-            'username' => 'TC',
+            'username' => '狂龙军团-TC',
             'nickname' => '已有重名账号',
             'password' => Hash::make('existing-password'),
             'status' => 1,
@@ -36,7 +36,7 @@ class MemberSeederTest extends TestCase
         $this->assertDatabaseMissing('users', ['nickname' => 'FZS-K仔']);
 
         $imported = User::query()->where('nickname', '狂龙军团-TC')->firstOrFail();
-        $this->assertSame('TC2', $imported->username);
+        $this->assertSame('狂龙军团-TC2', $imported->username);
         $this->assertTrue(Hash::check('123456', $imported->password));
         $this->assertTrue($imported->platform_access_expires_at->isFuture());
         $this->assertTrue($imported->hasRole('队员'));

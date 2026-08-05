@@ -82,7 +82,7 @@ class MemberSeeder extends Seeder
                     }
                     $reusedUsers++;
                 } else {
-                    $username = $this->availableUsername($member['name'], $usedUsernames);
+                    $username = $this->availableUsername($nickname, $usedUsernames);
                     $attributes = [
                         'username' => $username,
                         'nickname' => $nickname,
