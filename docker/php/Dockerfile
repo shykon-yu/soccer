@@ -1,5 +1,5 @@
 # PHP 8.2-FPM for Laravel 9 (soccer_php)
-FROM php:8.2-fpm
+FROM docker.m.daocloud.io/library/php:8.2-fpm
 
 # Use a mainland China mirror by default; pass --build-arg APT_MIRROR=deb.debian.org
 # when building in an environment with fast access to Debian's official mirror.
@@ -39,7 +39,7 @@ RUN docker-php-ext-install -j$(nproc) \
 RUN pecl install redis && docker-php-ext-enable redis
 
 # Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=docker.m.daocloud.io/library/composer:2 /usr/bin/composer /usr/bin/composer
 
 # PHP 配置
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/soccer.ini
