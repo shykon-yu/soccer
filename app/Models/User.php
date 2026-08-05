@@ -35,6 +35,7 @@ class User extends Authenticatable implements JWTSubject
         'nickname',
         'avatar',
         'status',
+        'platform_access_expires_at',
         'email',
         'phone',
         'password',
@@ -48,6 +49,7 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
         'username_changed_at' => 'datetime',
+        'platform_access_expires_at' => 'datetime',
     ];
 
     /** 返回 JWT subject 使用的用户主键。 */

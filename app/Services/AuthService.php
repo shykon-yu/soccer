@@ -40,6 +40,23 @@ class AuthService
         return $this->tokenPayload($user, $token);
     }
 
+    /** 校验对战平台登录，不签发 Laravel JWT，也不影响管理前台登录。 */
+    public function authenticatePlatform(string $username, string $password): User
+    {
+        $user = User::query()->where('username', $username)->first();
+        if (! $user || ! Hash::check($password, $user->password)) {
+            throw BusinessException::fromCode(ApiCode::LOGIN_FAILED);
+        }
+        if ((int) $user->status === 0) {
+            throw BusinessException::fromCode(ApiCode::ACCOUNT_DISABLED);
+        }
+        if (! $user->platform_access_expires_at || ! $user->platform_access_expires_at->isFuture()) {
+            throw BusinessException::fromCode(ApiCode::PLATFORM_ACCESS_EXPIRED);
+        }
+
+        return $user;
+    }
+
     /**
      * 用当前 token 刷新出新 token（支持过期 token，只要在 refresh_ttl 窗口内）。
      *

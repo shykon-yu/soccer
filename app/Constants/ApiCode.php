@@ -53,6 +53,8 @@ class ApiCode
 
     public const UPLOAD_FAILED = 1007;      // 上传失败
 
+    public const PLATFORM_ACCESS_EXPIRED = 1008; // 对战平台使用权限未开通或已到期
+
     /**
      * code => 前端展示文案（ElMessage.error 直接展示）。
      */
@@ -75,6 +77,7 @@ class ApiCode
         self::RESOURCE_EXISTS => '资源已存在',
         self::FAIL => '操作失败，请稍后重试',
         self::UPLOAD_FAILED => '文件上传失败',
+        self::PLATFORM_ACCESS_EXPIRED => '平台使用权限已到期，请联系管理员',
     ];
 
     /**
@@ -99,6 +102,7 @@ class ApiCode
         self::RESOURCE_EXISTS => 409,
         self::FAIL => 400,
         self::UPLOAD_FAILED => 400,
+        self::PLATFORM_ACCESS_EXPIRED => 403,
     ];
 
     /**

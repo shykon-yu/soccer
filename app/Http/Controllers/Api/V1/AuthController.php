@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Requests\Api\V1\LoginRequest;
 use App\Http\Requests\Api\V1\ProfileUpdateRequest;
 use App\Http\Resources\Api\V1\AuthTokenResource;
+use App\Http\Resources\Api\V1\PlatformAuthResource;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
@@ -35,7 +36,15 @@ class AuthController extends BaseController
             $request->password
         );
 
-        return $this->resource(resource:  AuthTokenResource::make($result), message: '登录成功');
+        return $this->resource(resource: AuthTokenResource::make($result), message: '登录成功');
+    }
+
+    /** Go 对战平台专用认证：校验平台期限但不签发 Laravel token。 */
+    public function platformLogin(LoginRequest $request): JsonResponse
+    {
+        $user = $this->authService->authenticatePlatform($request->username, $request->password);
+
+        return $this->resource(PlatformAuthResource::make($user), '平台登录验证成功');
     }
 
     /**

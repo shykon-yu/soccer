@@ -42,7 +42,7 @@ class UserService
                     $membership->where('team_id', $filters['team_id']);
                 });
             })
-            //不要status=0时候
+            // 不要status=0时候
             ->when(isset($filters['status']) && $filters['status'] !== '', function ($query) use ($filters) {
                 $query->where('status', $filters['status']);
             })
@@ -145,6 +145,29 @@ class UserService
         return $user->fresh('roles');
     }
 
+    /** 开通、续期或取消用户的对战平台使用权限。 */
+    public function setPlatformAccess(int $id, int $months): User
+    {
+        return DB::transaction(function () use ($id, $months) {
+            $user = User::query()->lockForUpdate()->find($id);
+            if (! $user) {
+                throw BusinessException::fromCode(ApiCode::NOT_FOUND);
+            }
+
+            if ($months === 0) {
+                $user->platform_access_expires_at = null;
+            } else {
+                $startsAt = $user->platform_access_expires_at?->isFuture()
+                    ? $user->platform_access_expires_at->copy()
+                    : now();
+                $user->platform_access_expires_at = $startsAt->addMonthsNoOverflow($months);
+            }
+            $user->save();
+
+            return $user->fresh(['roles', 'memberships.league', 'memberships.team']);
+        });
+    }
+
     /** 返回用户状态下拉选项。 */
     public function statusOptions(): array
     {
@@ -205,5 +228,4 @@ class UserService
             );
         }
     }
-
 }

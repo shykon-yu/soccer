@@ -27,6 +27,7 @@ Route::get('/competition/team-history-detail', [CompetitionController::class, 't
 // ===== 公开接口（无需 token）=====
 Route::prefix('auth')->as('auth.')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth')->name('login');
+    Route::post('/platform-login', [AuthController::class, 'platformLogin'])->middleware('throttle:auth')->name('platform-login');
     // Route::post('/register', [AuthController::class, 'register'])->name('register');
     // refresh 必须在 auth 中间件外：token 过期时 auth 会直接拦截 401，永远到不了刷新逻辑
     Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('throttle:refresh')->name('refresh');
@@ -117,6 +118,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/change', [UserController::class, 'changeStatus'])->name('change');
         Route::post('/rest_password', [UserController::class, 'resetPassword'])->name('reset-password');
         Route::post('/assign_roles', [UserController::class, 'assignRoles'])->name('assign-roles');
+        Route::post('/platform_access', [UserController::class, 'setPlatformAccess'])->name('platform-access');
         Route::get('/status', [UserController::class, 'status'])->name('status');
         Route::get('/role', [UserController::class, 'roles'])->name('roles');
     });

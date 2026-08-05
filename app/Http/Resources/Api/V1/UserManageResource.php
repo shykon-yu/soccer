@@ -22,6 +22,10 @@ class UserManageResource extends JsonResource
             'phone' => $this->phone,
             'avatar' => $this->avatar,
             'status' => (int) ($this->status ?? 1),
+            'platform_access_expires_at' => $this->platform_access_expires_at?->toDateTimeString(),
+            'platform_access_status' => ! $this->platform_access_expires_at
+                ? 'not_granted'
+                : ($this->platform_access_expires_at->isFuture() ? 'active' : 'expired'),
             'roles' => $this->whenLoaded('roles', fn () => $this->roles->pluck('name')->values()->all(), []),
             'role_ids' => $this->whenLoaded('roles', fn () => $this->roles->pluck('id')->values()->all(), []),
             'memberships' => $this->whenLoaded('memberships', function () {
